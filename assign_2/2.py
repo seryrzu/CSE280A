@@ -2,8 +2,7 @@ from random import randint, seed, random
 from math import exp
 import numpy as np
 from numpy.random import poisson
-
-seed(0)
+from argparse import ArgumentParser
 
 
 class Vertex:
@@ -44,7 +43,7 @@ class Tree:
             return k + 1  # as at least one generation
 
         N *= 2  # Diploidy
-        mu = theta / (2 * N)  # TODO check that is correct
+        mu = theta / (2 * N)
         ealpha = exp(-alpha)
 
         nodes = [Vertex(ind=i, gen=0) for i in range(n)]
@@ -94,12 +93,20 @@ class Tree:
         return m
 
 def main():
-    n, N, theta, alpha = 10, 10**6, 40, 7 / (4 * 10**6)
-    alpha = 0
+    parser = ArgumentParser()
+    parser.add_argument("-n", dest="n", type=int, required=True)
+    parser.add_argument("-N", dest="N", type=int, required=True)
+    parser.add_argument("--theta", dest="theta", type=float, required=True)
+    parser.add_argument("--alpha", dest="alpha", type=float, required=True)
+    parser.add_argument("--output_tree", dest="output_tree", required=True)
+    parser.add_argument("--output_matrix", dest="output_matrix", required=True)
+    params = parser.parse_args()
+    n, N, theta, alpha = params.n, params.N, params.theta, params.alpha
     print("n = %d, N = %d, theta = %f, alpha = %f" % (n, N, theta, alpha))
     tree = Tree.simulate_tree(n, N, theta, alpha)
-    print(tree)
-    print(tree.tree2SNPmatrix())
+    with open(params.output_tree, 'w') as f:
+        print(tree, file=f)
+    np.savetxt(params.output_matrix, tree.tree2SNPmatrix(), fmt="%d")
 
 
 if __name__ == "__main__":

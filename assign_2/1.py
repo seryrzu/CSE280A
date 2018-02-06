@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
 
 
-### TODO Yates
 def DprimeFast(df, Yates=False):
     p1 = np.mean(df, axis=0)
     p0 = 1-p1
@@ -50,12 +49,18 @@ def main():
 
     mask = np.tril(np.ones_like(Dprimes))
     print(np.min(Chi2sPv))
+    sns.heatmap(Dprimes, xticklabels=False, yticklabels=False, mask=mask,
+                cmap="YlGnBu")
+    plt.savefig('1_dprime.png', format='png')
+    plt.close()
     sns.heatmap(Chi2sPv, xticklabels=False, yticklabels=False, mask=mask,
                 cmap="YlGnBu",
                 vmin=np.min(Chi2sPv), vmax=np.max(Chi2sPv) / 6)
-    plt.show()
-    pass
-    # plt.savefig('1.pdf', format='pdf')
+    plt.savefig('1_logpv.png', format='png')
+    plt.close()
+    sns.heatmap(np.exp(-Chi2sPv), xticklabels=False, yticklabels=False, mask=mask,
+                cmap="YlGnBu")
+    plt.savefig('1_pv.png', format='png')
     nrow, ncol = df.shape
     print("Dprime exporting")
     with open("1_dprime.tsv", "w") as f:
