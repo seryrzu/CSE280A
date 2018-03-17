@@ -15,7 +15,10 @@ def __MaxCol(M, f):
         means = means[unused_cols * feasible_cols]
         means **= 2
         means /= sum(means)
-        col_ind = np.random.choice(ids[unused_cols * feasible_cols], size = 1,
+        if len(means) == 0:
+            return ~unused_cols
+        col_ind = np.random.choice(ids[unused_cols * feasible_cols],
+                                   size = 1,
                                    p = means)[0]
         if np.mean(inters * M[:, col_ind]) > f:
             inters *= M[:, col_ind]
@@ -38,26 +41,27 @@ def MaxCol(M, f, N=10000):
     return best_cols
 
 
-M_fn = 'a3data2.txt'
-with open(M_fn, 'r') as f:
-    M = [list(x.strip()) for x in f.readlines()]
-    M = np.array(M).astype(bool)
+if __name__ == '__main__':
+    M_fn = 'a3data2.txt'
+    with open(M_fn, 'r') as f:
+        M = [list(x.strip()) for x in f.readlines()]
+        M = np.array(M).astype(bool)
 
-ncols = []
-fs = [0.1, 0.3, 0.5, 0.7, 0.9]
-for f in fs:
-    cols = MaxCol(M, f=f)
-    print(f)
-    print(np.mean(np.prod(M[:, cols], axis=1)))
-    print(np.sum(cols))
-    print(np.where(cols)[0])
-    print("")
-    ncols.append(np.sum(cols))
+    ncols = []
+    fs = [0.1, 0.3, 0.5, 0.7, 0.9]
+    for f in fs:
+        cols = MaxCol(M, f=f)
+        print(f)
+        print(np.mean(np.prod(M[:, cols], axis=1)))
+        print(np.sum(cols))
+        print(np.where(cols)[0])
+        print("")
+        ncols.append(np.sum(cols))
 
 
-plt.plot(fs, ncols)
-plt.title("# Columns of Randomized Greedy Approach ")
-plt.xlabel("fraction")
-plt.ylabel("# columns")
-plt.savefig("pr4.pdf")
-plt.close()
+    plt.plot(fs, ncols)
+    plt.title("# Columns of Randomized Greedy Approach ")
+    plt.xlabel("fraction")
+    plt.ylabel("# columns")
+    plt.savefig("pr4.pdf")
+    plt.close()
