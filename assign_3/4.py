@@ -49,9 +49,6 @@ def main():
         random_scores.append(classify(samp))
     print(ttest_1samp(random_scores, 2/3))
 
-    sns.distplot(scores)
-    sns.distplot(random_scores)
-
 
 if __name__ == "__main__":
     main()
